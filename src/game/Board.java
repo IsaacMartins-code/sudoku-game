@@ -6,10 +6,10 @@ import java.util.List;
 
 public class Board {
 
-    private int[][] numbers = new int[9][9];
-    private List<String> fixedPositions = new ArrayList<>();
-    private List<String> expectedInputs = new ArrayList<>();
-    private List<String> inputs = new ArrayList<>();
+    private final int[][] numbers = new int[9][9];
+    private final List<String> fixedPositions = new ArrayList<>();
+    private final List<String> expectedInputs = new ArrayList<>();
+    private final List<String> inputs = new ArrayList<>();
     private GameState gameState = GameState.INCOMPLETE;
 
     public Board(String[] args) {
@@ -23,7 +23,12 @@ public class Board {
             }
         }
 
-        defaultPositions();
+        for(String value : fixedPositions) {
+            String[] fields = value.split(";");
+            String[] position = fields[0].split(",");
+            int number = Integer.parseInt(fields[1]);
+            numbers[Integer.parseInt(position[1])][Integer.parseInt(position[0])] = number;
+        }
     }
 
     public StringBuilder verifyGame() {
@@ -64,15 +69,6 @@ public class Board {
         return false;
     }
 
-    public void defaultPositions() {
-        for(String value : fixedPositions) {
-            String[] fields = value.split(";");
-            String[] position = fields[0].split(",");
-            int number = Integer.parseInt(fields[1]);
-            numbers[Integer.parseInt(position[1])][Integer.parseInt(position[0])] = number;
-        }
-    }
-
     public void addInput(String input) {
         inputs.add(input);
     }
@@ -82,6 +78,11 @@ public class Board {
     }
 
     public void clearInputs() {
+        for(String input : inputs) {
+            String[] fields = input.split(";");
+            String[] position = fields[0].split(",");
+            numbers[Integer.parseInt(position[1])][Integer.parseInt(position[0])] = 0;
+        }
         inputs.clear();
     }
 
