@@ -3,7 +3,7 @@ package application;
 public class UI {
 
     private static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";   // GREEN
+    private static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";   // GREEN
     private static final String RESET = "\u001B[0m";
 
     public static StringBuilder generateBoard(int[][] numbers) {

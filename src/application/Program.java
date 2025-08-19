@@ -1,5 +1,6 @@
 package application;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import enums.GameState;
 import game.Board;
@@ -44,8 +45,32 @@ public class Program {
                     break;
 
                 default:
-                    System.out.print("Selecione a linha que deseja alterar: ");
-                    int line = sc.nextInt();
+                    clearScreen();
+                    System.out.println(generateBoard(board.getNumbers()));
+
+                    Integer line = null;
+
+                    while(line == null) {
+                        try {
+                            System.out.print("Selecione a linha que deseja alterar: ");
+                            if(sc.hasNextInt()) {
+                                line = sc.nextInt();
+                                if(line < 0 || line > 8) {
+                                    line = null;
+                                    throw new InputMismatchException("Linha inválida! Apenas números entre 0 e 8!");
+                                }
+                            } else {
+                                sc.next();
+                                throw new InputMismatchException("Linha inválida! Apenas números entre 0 e 8!");
+                            }
+
+                        } catch (InputMismatchException e) {
+                            clearScreen();
+                            System.out.println(generateBoard(board.getNumbers()));
+                            System.out.println(" ");
+                            System.out.println(e.getMessage());
+                        }
+                    }
 
                     boolean stop = false;
                     String message = "";
@@ -55,17 +80,48 @@ public class Program {
                         System.out.println(message);
                         System.out.println(" ");
 
-                        System.out.println("(Alterando a linha " + line + ")");
-                        int column;
-                        int number;
+                        Integer column = null;
+                        Integer number = null;
 
-                        System.out.print("Selecione a coluna que deseja alterar: ");
-                        column = sc.nextInt();
-                        clearScreen();
-                        System.out.println(generateBoard(board.getNumbers(), line, column));
-                        System.out.print("Selecione o numero que deseja colocar: ");
-                        number = sc.nextInt();
+                        while(column == null || number == null) {
+                            try {
+                                System.out.println(" ");
+                                System.out.println("(Alterando a linha " + line + ")");
+                                System.out.print("Selecione a coluna que deseja alterar: ");
+                                if(sc.hasNextInt()) {
+                                    column = sc.nextInt();
+                                    if(column < 0 || column > 8) {
+                                        column = null;
+                                        throw new InputMismatchException("Coluna inválida! Apenas números entre 0 e 8!");
+                                    }
+                                } else {
+                                    sc.next();
+                                    throw new InputMismatchException("Coluna inválida! Apenas números entre 0 e 8!");
+                                }
 
+
+                                clearScreen();
+                                System.out.println(generateBoard(board.getNumbers(), line, column));
+                                System.out.print("Selecione o número que deseja colocar: ");
+                                if(sc.hasNextInt()) {
+                                    number = sc.nextInt();
+                                    if (number < 1 || number > 9) {
+                                        number = null;
+                                        throw new InputMismatchException("Número inválido! Apenas números entre 1 e 9!");
+                                    }
+                                } else {
+                                    sc.next();
+                                    throw new InputMismatchException("Número inválido! Apenas entre 1 e 9!");
+                                }
+
+
+                            } catch (InputMismatchException e) {
+                                clearScreen();
+                                System.out.println(generateBoard(board.getNumbers(), line));
+                                System.out.println(" ");
+                                System.out.println(e.getMessage());
+                            }
+                        }
 
                         String input = column + "," + line;
                         String fixed = "";
@@ -75,13 +131,8 @@ public class Program {
                                 break;
                             }
                         }
-
                         if (!fixed.isEmpty()) {
                             message = "Essa posição não pode ser alterada!";
-                        } else if (number  > 9 || number < 1) {
-                            message = "Número inválido! Apenas valores entre 1 e 9!";
-                        } else if(column > 8 || column < 0) {
-                            message = "Coluna inválida! Apenas valores entre 0 e 8!";
                         } else {
                             board.removePastInput(input);
                             board.addInput(input + ";" + number);
